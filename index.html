@@ -26,6 +26,7 @@
     /* Input box for relative positioning of the icon and label */
     .input_box {
         position: relative;
+        /* Increased height slightly to accommodate the padding on date/time inputs */
         min-height: 3.5rem; 
     }
 
@@ -33,6 +34,7 @@
     .input-field {
         padding: 0.75rem 1rem 0.75rem 2.5rem; /* Padding for the icon */
         transition: border-color 0.3s, box-shadow 0.3s;
+        /* Custom focus ring from the contact form (but using Tailwind classes for visual cues) */
         border-color: #e5e7eb;
     }
     .input-field:focus {
@@ -67,7 +69,7 @@
 <body class="flex items-center justify-center p-4">
 
     <div class="wrapper w-full max-w-lg">
-        <!-- Message Box (Hidden by default) -->
+        <!-- Message Box (Hidden by default - from index.html) -->
         <div id="message-box" class="hidden fixed top-4 right-4 z-50 p-4 rounded-lg text-white font-semibold shadow-xl transition-opacity duration-300 opacity-0" role="alert">
             <!-- Content will be inserted by JavaScript -->
         </div>
@@ -77,15 +79,15 @@
             
             <!-- Header -->
             <div class="login-header text-center">
-                <h4 class="text-3xl font-extrabold text-[#003b5b] mb-2">حجز موعد جديد</h4>
-                <p class="text-gray-500 text-base">املأ التفاصيل أدناه لحجز موعدك. يجب أن يكون هناك فاصل ساعة بين المواعيد.</p>
+                <h4 class="text-3xl font-extrabold text-[#003b5b] mb-2">Book an Appointment</h4>
+                <p class="text-gray-500 text-base">Fill out the details below and we'll get back to you!</p>
             </div>
 
             <form method="post" action="" name="contact-form" class="space-y-4 mt-6">
             
                 <!-- Input: Name -->
                 <div class="input_box">
-                    <input type="text" name="your-name" placeholder="الاسم الكامل" required
+                    <input type="text" name="your-name" placeholder="Full Name" required
                            class="input-field w-full border border-gray-300 rounded-lg text-gray-800"
                     >
                     <i class="bx bx-user icon"></i>
@@ -93,17 +95,15 @@
                 
                 <!-- Input: Number -->
                 <div class="input_box">
-                    <input type="tel" name="your-number" placeholder="رقم الهاتف" required
+                    <input type="tel" name="your-number" placeholder="Phone Number" required
                            class="input-field w-full border border-gray-300 rounded-lg text-gray-800"
                     >
                     <i class="bx bx-phone icon"></i>
                 </div>
-               
 
-               
                 <!-- Input: Email -->
                 <div class="input_box">
-                    <input type="email" name="your-email" placeholder="البريد الإلكتروني" required
+                    <input type="email" name="your-email" placeholder="Email Address" required
                            class="input-field w-full border border-gray-300 rounded-lg text-gray-800"
                     >
                     <i class="bx bx-envelope icon"></i>
@@ -129,7 +129,7 @@
 
                 <!-- Textarea: Message -->
                 <div>
-                    <textarea name="message" rows="4" placeholder="وصف موجز للطلب..." required
+                    <textarea name="message" rows="4" placeholder="Briefly describe your request..." required
                               class="textarea-field w-full border border-gray-300 rounded-lg text-gray-800 resize-none"
                     ></textarea>
                 </div>
@@ -140,61 +140,18 @@
                            class="input-submit w-full py-3 bg-orange-500 text-white font-semibold rounded-lg 
                                   hover:bg-orange-600 transition duration-300 shadow-lg cursor-pointer 
                                   focus:outline-none focus:ring-4 focus:ring-orange-300 active:scale-[0.98]">
-                        تأكيد الحجز
+                        Confirm Booking
                     </button>
-                </div>
-                
-                <!-- Availability status (optional, for display) -->
-                <div id="availability-status" class="text-center pt-2 text-sm text-gray-600 hidden">
-                    <!-- Status will be displayed here -->
                 </div>
             </form>
         </div>
     </div>
 
-<script type="module">
-    // --- Firebase & Firestore Setup ---
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    // Global variables (provided by the environment)
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-    const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-    
-    // Global references
-    let isAuthenticated = false;
-    const BOOKINGS_COLLECTION_PATH = `/artifacts/${appId}/public/data/bookings`;
+<script>
+    // --- Google Sheets Submission Logic (from index.html) ---
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyLk3LNqAIGdR5yy_ylJbT_u1q7x1OuJ0IQqJXk47NF-koVS2aBt8QXGyQ6cM9Q9QaiAw/exec';
     const form = document.forms['contact-form'];
     const messageBox = document.getElementById('message-box');
-    const submitButton = document.getElementById('submit');
-    
-    // --- Google Sheets Submission Setup (Re-integrated) ---
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyLk3LNqAIGdR5yy_ylJbT_u1q7x1OuJ0IQqJXk47NF-koVS2aBt8QXGyQ6cM9Q9QaiAw/exec';
-
-    /**
-     * Authenticates the user using the provided token or anonymously.
-     */
-    async function initializeAuth() {
-        try {
-            if (initialAuthToken) {
-                await signInWithCustomToken(auth, initialAuthToken);
-            } else {
-                await signInAnonymously(auth);
-            }
-            isAuthenticated = true;
-            console.log("Firebase initialized and authenticated successfully.");
-        } catch (error) {
-            console.error("Firebase Auth Error:", error);
-            showMessage("خطأ في الاتصال بالنظام. (System connection error.)", 'error');
-        }
-    }
 
     /**
      * Shows a custom, transient message box instead of using alert().
@@ -214,10 +171,7 @@
         }
 
         // Show with animation
-        messageBox.classList.remove('hidden');
-        setTimeout(() => {
-            messageBox.classList.add('opacity-100');
-        }, 10); // Small delay to trigger transition
+        messageBox.classList.add('opacity-100');
 
         // Hide after 5 seconds
         setTimeout(() => {
@@ -231,173 +185,47 @@
         }, 5000);
     }
     
-    /**
-     * Simple Exponential Backoff Retry mechanism for Sheets Submission.
-     * @param {FormData} formData - The form data to submit.
-     * @param {number} maxRetries - Maximum retry attempts.
-     * @param {number} delay - Initial delay in ms.
-     */
-    async function submitToGoogleScript(formData, maxRetries = 3, delay = 1000) {
+    // Simple Exponential Backoff Retry mechanism
+    async function submitFormWithRetry(url, formData, maxRetries = 3, delay = 1000) {
         for (let i = 0; i < maxRetries; i++) {
             try {
-                const response = await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: formData });
+                const response = await fetch(url, { method: 'POST', body: formData });
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                console.log("Data successfully logged to Google Sheet (Secondary Log).");
-                return response; 
+                return response; // Success, return the response
             } catch (error) {
-                console.error(`Attempt ${i + 1} to log data to Google Sheet failed:`, error);
+                console.error(`Attempt ${i + 1} failed:`, error);
                 if (i === maxRetries - 1) {
                     throw error; // Throw final error if all retries fail
                 }
-                // Exponential backoff
-                await new Promise(resolve => setTimeout(resolve, delay * (2 ** i))); 
+                await new Promise(resolve => setTimeout(resolve, delay * (2 ** i)));
             }
         }
     }
 
-    /**
-     * Checks if the requested date and time slot is available, 
-     * ensuring a minimum 60-minute gap between bookings (Firestore logic).
-     * @param {string} requestedDate - The date string (YYYY-MM-DD).
-     * @param {string} requestedTime - The time string (HH:MM).
-     * @returns {Promise<boolean>} - True if the slot is available, false otherwise.
-     */
-    async function isTimeSlotAvailable(requestedDate, requestedTime) {
-        if (!isAuthenticated) return false;
-
-        // 1. Convert requested time slot into a start Date object
-        const requestedStart = new Date(`${requestedDate}T${requestedTime}:00`);
-        if (isNaN(requestedStart)) {
-             console.error("Invalid Date/Time Input.");
-             return false;
-        }
-
-        // 2. Define the requested booking window: 1 hour duration.
-        const requestedEnd = new Date(requestedStart.getTime() + 60 * 60 * 1000); // Add 1 hour
-
-        // 3. Define the protection window: an existing booking must not fall 
-        //    within 60 minutes of the requested start or end time.
-        const protectedStart = new Date(requestedStart.getTime() - 60 * 60 * 1000); // 1 hour before requested start
-        const protectedEnd = new Date(requestedEnd.getTime() + 60 * 60 * 1000);   // 1 hour after requested end
-
-
-        // 4. Query all bookings on the same day from Firestore
-        const bookingsRef = collection(db, BOOKINGS_COLLECTION_PATH);
-        
-        // Note: Firestore queries for date are tricky. We will query only by date string 
-        // to simplify, then filter by time in memory.
-        const q = query(bookingsRef, where("date", "==", requestedDate));
-        
-        try {
-            const querySnapshot = await getDocs(q);
-            
-            let isAvailable = true;
-
-            querySnapshot.forEach(doc => {
-                const booking = doc.data();
-                
-                // Get existing booking time strings
-                const existingDateStr = booking.date;
-                const existingTimeStr = booking.time;
-                
-                // Convert existing booking to Date objects
-                const existingStart = new Date(`${existingDateStr}T${existingTimeStr}:00`);
-                if (isNaN(existingStart)) return; 
-
-                // We assume existing bookings also have a 1-hour duration
-                const existingEnd = new Date(existingStart.getTime() + 60 * 60 * 1000); 
-                
-                // The main conflict check:
-                
-                // Check if the existing booking's start or end time falls within the NEW requested slot's 1-hour buffer
-                const existingStartWithinProtectedNewSlot = 
-                    existingStart >= protectedStart && existingStart < protectedEnd;
-                
-                // Check if the new requested slot starts or ends within the EXISTING booking's 1-hour buffer
-                const requestedStartWithinProtectedExistingSlot = 
-                    requestedStart >= (new Date(existingStart.getTime() - 60 * 60 * 1000)) && requestedStart < (new Date(existingEnd.getTime() + 60 * 60 * 1000));
-                
-                if (existingStartWithinProtectedNewSlot || requestedStartWithinProtectedExistingSlot) {
-                    isAvailable = false;
-                    console.log(`Conflict found with booking at ${existingTimeStr} on ${existingDateStr}`);
-                }
-
-            });
-
-            return isAvailable;
-
-        } catch (error) {
-            console.error("Error fetching bookings:", error);
-            return false;
-        }
-    }
-
-
-    // --- Main Submission Logic ---
 
     form.addEventListener('submit', async e => {
         e.preventDefault();
         
+        const submitButton = document.getElementById('submit');
         const originalText = submitButton.textContent;
         
-        // 1. Basic validation and UI lock
+        // Disable button and show loading state
         submitButton.disabled = true;
-        submitButton.textContent = 'جاري التحقق...'; // Checking...
-
-        if (!isAuthenticated) {
-            showMessage("خطأ: لم يتم تهيئة النظام بشكل صحيح. (System not initialized.)", 'error');
-            submitButton.disabled = false;
-            submitButton.textContent = originalText;
-            return;
-        }
-
-        const formData = new FormData(form);
-        const requestedDate = formData.get('your-date');
-        const requestedTime = formData.get('your-time');
+        submitButton.textContent = 'Submitting...';
 
         try {
-            // 2. Check for availability (Firestore)
-            submitButton.textContent = 'جاري التحقق من التوفر...'; // Checking availability...
-            const isAvailable = await isTimeSlotAvailable(requestedDate, requestedTime);
-
-            if (!isAvailable) {
-                showMessage("عذراً، هذا الموعد غير متوفر أو يتعارض مع فاصل زمني مطلوب (ساعة واحدة). الرجاء اختيار وقت آخر.", 'error');
-                return;
-            }
-
-            // 3. Slot is available, proceed to book
-            submitButton.textContent = 'جاري الحجز...'; // Booking...
-            
-            const bookingData = {
-                name: formData.get('your-name'),
-                phone: formData.get('your-number'),
-                email: formData.get('your-email'),
-                date: requestedDate,
-                time: requestedTime,
-                message: formData.get('message'),
-                timestamp: new Date().toISOString(),
-                bookedBy: auth.currentUser?.uid || 'anonymous'
-            };
-
-            // PRIMARY ACTION: Save to Firestore (Availability source)
-            await addDoc(collection(db, BOOKINGS_COLLECTION_PATH), bookingData);
-
-            // SECONDARY ACTION: Log to Google Sheet (Non-blocking backup log)
-            // We use .catch() so the main success message isn't blocked by Sheets failure
-            submitToGoogleScript(formData).catch(err => {
-                 console.warn("فشل في تسجيل البيانات في Google Sheet. تم تأكيد الحجز في Firestore. (Failed to log data to Google Sheet. Booking confirmed in Firestore.)", err);
-            });
+            await submitFormWithRetry(scriptURL, new FormData(form));
             
             // Success response
-            showMessage("تم تأكيد الحجز! سيتم التواصل معك قريباً. (Booking confirmed!)", 'success');
+            showMessage("Booking confirmed! Your details have been submitted successfully.", 'success');
             form.reset();
             
         } catch (error) {
             // Error response
-            console.error('Final Submission Error (Firestore):', error);
-            showMessage("حدث خطأ أثناء إتمام الحجز. الرجاء المحاولة مرة أخرى.", 'error');
+            console.error('Final Submission Error:', error);
+            showMessage("Submission failed. Please check your connection and try again.", 'error');
             
         } finally {
             // Re-enable button and restore text
@@ -405,10 +233,6 @@
             submitButton.textContent = originalText;
         }
     });
-
-    // Initialize Firebase Auth on load
-    window.onload = initializeAuth;
-
 </script>
 
 </body>
