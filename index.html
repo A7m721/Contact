@@ -1,239 +1,511 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Modern Contact & Booking Form</title>
-  <!-- Load Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Load Boxicons for the icons -->
-  <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'>
-  <!-- Load Poppins font (from login form) -->
-  <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap'>
-  
-  <style>
-    /* Custom styles to ensure Poppins is used and the body is centered */
-    * {
-        font-family: 'Poppins', sans-serif;
-    }
-    
-    /* Ensure body fills the viewport and uses a soft background */
-    body {
-        min-height: 100vh;
-        background-color: #f3f4f6; /* Light gray background */
-    }
-
-    /* Input box for relative positioning of the icon and label */
-    .input_box {
-        position: relative;
-        /* Increased height slightly to accommodate the padding on date/time inputs */
-        min-height: 3.5rem; 
-    }
-
-    /* Style the input field itself, adapting the login form style */
-    .input-field {
-        padding: 0.75rem 1rem 0.75rem 2.5rem; /* Padding for the icon */
-        transition: border-color 0.3s, box-shadow 0.3s;
-        /* Custom focus ring from the contact form (but using Tailwind classes for visual cues) */
-        border-color: #e5e7eb;
-    }
-    .input-field:focus {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(0, 59, 91, 0.3); 
-        border-color: #003b5b;
-    }
-
-    /* Icon position inside the input box (from login form) */
-    .icon {
-        position: absolute;
-        top: 50%;
-        left: 0.75rem;
-        transform: translateY(-50%);
-        color: #9ca3af; /* Gray-400 */
-        font-size: 1.5rem;
-        pointer-events: none; /* Icon should not interfere with input interaction */
-    }
-    
-    /* Style for textarea (no inline icon) */
-    .textarea-field {
-        padding: 0.75rem 1rem;
-        transition: border-color 0.3s, box-shadow 0.3s;
-    }
-    .textarea-field:focus {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(0, 59, 91, 0.3); 
-        border-color: #003b5b;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مركز الفارس - خدمة العملاء</title>
+    <!-- تحميل Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- تعيين خط Cairo وتهيئة Tailwind للاتجاه من اليمين لليسار (RTL) -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f0f4f8; /* خلفية رمادية فاتحة جديدة */
+            direction: rtl; 
+            transition: all 0.3s ease;
+        }
+        /* تصميم شريط التمرير المخصص */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #a7f3d0; /* لون Primary فاتح */
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #e2e8f0;
+        }
+        /* تنسيق خاص للقوائم والروابط داخل المحتوى الماركداون */
+        .markdown-content ul {
+            list-style-type: disc;
+            margin-right: 20px;
+            padding-right: 0;
+        }
+        .markdown-content li {
+            margin-top: 5px;
+            line-height: 1.6;
+        }
+        .markdown-content a {
+            color: #1d4ed8; /* لون أزرق للروابط */
+            text-decoration: underline;
+            font-weight: 600;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#059669', /* Emerald 700 - لون قوي للعلامة التجارية */
+                        'primary-light': '#34d399', /* Emerald 400 */
+                        'primary-dark': '#047857', /* Emerald 800 */
+                        'user-bg': '#e0f2f1', /* Light Teal */
+                        'ai-bg': '#f9fafb', /* Off-white */
+                        'accent': '#1d4ed8', /* Darker Blue */
+                    },
+                    borderRadius: {
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="flex items-center justify-center p-4">
+<body class="p-0 sm:p-8 flex flex-col sm:items-center sm:justify-center min-h-screen">
 
-    <div class="wrapper w-full max-w-lg">
-        <!-- Message Box (Hidden by default - from index.html) -->
-        <div id="message-box" class="hidden fixed top-4 right-4 z-50 p-4 rounded-lg text-white font-semibold shadow-xl transition-opacity duration-300 opacity-0" role="alert">
-            <!-- Content will be inserted by JavaScript -->
+    <!-- الحاوية الرئيسية للدردشة -->
+    <div class="w-full max-w-2xl bg-white shadow-2xl rounded-2xl overflow-hidden flex flex-col h-screen sm:h-[90vh] transition-all duration-300 relative">
+        
+        <!-- شاشة البدء لجمع بيانات المستخدم - تظهر كطبقة علوية -->
+        <div id="start-overlay" class="absolute inset-0 bg-white/95 backdrop-blur-sm flex items-center justify-center p-8 z-10 rounded-2xl">
+            <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-sm border-t-4 border-primary">
+                <h2 class="text-3xl font-extrabold text-gray-800 mb-4 text-center">أهلاً بك في مركز الفارس</h2>
+                <p class="text-gray-600 mb-6 text-center">يرجى إدخال اسمك ورقم هاتفك لبدء المحادثة.</p>
+                
+                <label for="client-name" class="block text-sm font-semibold text-gray-700 mb-1">الاسم:</label>
+                <input type="text" id="client-name" placeholder="اسمك الكريم" 
+                       class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                       
+                <label for="client-phone" class="block text-sm font-semibold text-gray-700 mb-1">رقم الهاتف:</label>
+                <input type="tel" id="client-phone" placeholder="مثال: 05XXXXXXXX" 
+                       class="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                       
+                <button id="start-chat-button" onclick="startChatSession()" 
+                        class="w-full py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary-dark transition duration-200 shadow-md">
+                    بدء المحادثة
+                </button>
+                <p id="start-error" class="text-red-500 text-sm mt-3 text-center hidden">الرجاء إدخال الاسم ورقم الهاتف بشكل صحيح.</p>
+            </div>
         </div>
 
-        <!-- Form Card (from login_form.html) -->
-        <div class="login_box bg-white p-6 md:p-10 rounded-xl shadow-2xl space-y-6">
-            
-            <!-- Header -->
-            <div class="login-header text-center">
-                <h4 class="text-3xl font-extrabold text-[#003b5b] mb-2">Book an Appointment</h4>
-                <p class="text-gray-500 text-base">Fill out the details below and we'll get back to you!</p>
+        <!-- العنوان -->
+        <header class="p-5 bg-primary text-white text-center rounded-t-2xl shadow-lg border-b-4 border-primary-dark">
+            <h1 class="text-3xl font-extrabold tracking-wider"> مركز الفارس </h1>
+            <p class="text-sm opacity-90 mt-1">خدمة العملاءالآلية</p>
+        </header>
+
+        <!-- نافذة الدردشة -->
+        <div id="chat-window" class="flex-grow p-4 md:p-6 space-y-4 overflow-y-auto custom-scrollbar">
+            <!-- رسالة الترحيب الافتراضية -->
+            <div class="flex justify-start">
+                <div class="bg-ai-bg text-gray-800 p-4 rounded-xl rounded-tr-3xl max-w-[80%] shadow-md border border-gray-200">
+                    <span class="font-extrabold text-primary block mb-1">مركز الفارس:</span>
+                    <p class="mt-1">أهلاً بك في مركز الفارس للعناية بالرجل! نحن جاهزون لخدمتك على مدار (24) ساعة في فروعنا (بحرة، المحاميد، حدا). أنا هنا لمساعدتك في حجز موعد أو الإجابة على استفساراتك.</p>
+                </div>
             </div>
+        </div>
 
-            <form method="post" action="" name="contact-form" class="space-y-4 mt-6">
-            
-                <!-- Input: Name -->
-                <div class="input_box">
-                    <input type="text" name="your-name" placeholder="Full Name" required
-                           class="input-field w-full border border-gray-300 rounded-lg text-gray-800"
-                    >
-                    <i class="bx bx-user icon"></i>
-                </div>
-                
-                <!-- Input: Number -->
-                <div class="input_box">
-                    <input type="tel" name="your-number" placeholder="Phone Number" required
-                           class="input-field w-full border border-gray-300 rounded-lg text-gray-800"
-                    >
-                    <i class="bx bx-phone icon"></i>
-                </div>
+        <!-- مؤشر التحميل -->
+        <div id="loading-indicator" class="text-center p-3 hidden border-t border-gray-200">
+            <div class="flex items-center justify-center space-x-2 space-x-reverse">
+                <div class="w-4 h-4 bg-primary rounded-full animate-pulse delay-100"></div>
+                <div class="w-4 h-4 bg-primary rounded-full animate-pulse delay-200"></div>
+                <div class="w-4 h-4 bg-primary rounded-full animate-pulse delay-300"></div>
+                <span class="text-gray-600 mr-2 font-semibold">جاري الرد...</span>
+            </div>
+        </div>
 
-                <!-- Input: Email -->
-                <div class="input_box">
-                    <input type="email" name="your-email" placeholder="Email Address" required
-                           class="input-field w-full border border-gray-300 rounded-lg text-gray-800"
-                    >
-                    <i class="bx bx-envelope icon"></i>
-                </div>
-
-                <!-- Date and Time Inputs in a responsive grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- Input: Date -->
-                    <div class="input_box">
-                        <input type="date" name="your-date" required
-                               class="input-field w-full border border-gray-300 rounded-lg text-gray-800 pr-3" 
-                        >
-                        <i class="bx bx-calendar icon"></i>
-                    </div>
-                    <!-- Input: Time -->
-                    <div class="input_box">
-                        <input type="time" name="your-time" required
-                               class="input-field w-full border border-gray-300 rounded-lg text-gray-800 pr-3"
-                        >
-                        <i class="bx bx-time-five icon"></i>
-                    </div>
-                </div>
-
-                <!-- Textarea: Message -->
-                <div>
-                    <textarea name="message" rows="4" placeholder="Briefly describe your request..." required
-                              class="textarea-field w-full border border-gray-300 rounded-lg text-gray-800 resize-none"
-                    ></textarea>
-                </div>
-
-                <!-- Submit Button -->
-                <div class="input_box pt-2 h-auto">
-                    <button type="submit" id="submit"
-                           class="input-submit w-full py-3 bg-orange-500 text-white font-semibold rounded-lg 
-                                  hover:bg-orange-600 transition duration-300 shadow-lg cursor-pointer 
-                                  focus:outline-none focus:ring-4 focus:ring-orange-300 active:scale-[0.98]">
-                        Confirm Booking
-                    </button>
-                </div>
-            </form>
+        <!-- حقل الإدخال -->
+        <div class="p-4 bg-gray-50 border-t border-gray-200">
+            <div class="flex items-center space-x-2 space-x-reverse">
+                <input type="text" id="user-input" placeholder="هل يمكنني عمل حمام مغربي الآن في فرع المحاميد؟" 
+                    class="flex-grow p-3 sm:p-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-primary-light/50 focus:border-primary transition duration-200 text-lg text-gray-800 text-right" 
+                    disabled>
+                <button id="send-button" onclick="sendMessage()" 
+                        class="px-5 py-3 sm:px-6 sm:py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition duration-200 flex items-center justify-center disabled:opacity-50 shadow-md hover:shadow-lg transform active:scale-95" 
+                        disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6 ml-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A5.999 5.999 0 0112 12m0 0l-1.396 1.396M12 12l-6.731-8.874m6.731 8.874a5.999 5.999 0 018.731 8.874L18 12m-6 0l4.731 6.874M12 12l-4.731-6.874" />
+                    </svg>
+                    إرسال
+                </button>
+            </div>
         </div>
     </div>
 
-<script>
-    // --- Google Sheets Submission Logic (from index.html) ---
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyLk3LNqAIGdR5yy_ylJbT_u1q7x1OuJ0IQqJXk47NF-koVS2aBt8QXGyQ6cM9Q9QaiAw/exec';
-    const form = document.forms['contact-form'];
-    const messageBox = document.getElementById('message-box');
-
-    /**
-     * Shows a custom, transient message box instead of using alert().
-     * @param {string} message - The text to display.
-     * @param {string} type - 'success' or 'error'.
-     */
-    function showMessage(message, type = 'success') {
-        messageBox.textContent = message;
+    <!-- Firebase SDKs - unchanged logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
-        // Reset classes
-        messageBox.classList.remove('hidden', 'bg-red-500', 'bg-green-600', 'opacity-0');
-
-        if (type === 'success') {
-            messageBox.classList.add('bg-green-600');
-        } else {
-            messageBox.classList.add('bg-red-500');
-        }
-
-        // Show with animation
-        messageBox.classList.add('opacity-100');
-
-        // Hide after 5 seconds
-        setTimeout(() => {
-            messageBox.classList.remove('opacity-100');
-            messageBox.classList.add('opacity-0');
-            
-            // Wait for transition to complete before hiding fully
-            setTimeout(() => {
-                messageBox.classList.add('hidden');
-            }, 300); 
-        }, 5000);
-    }
-    
-    // Simple Exponential Backoff Retry mechanism
-    async function submitFormWithRetry(url, formData, maxRetries = 3, delay = 1000) {
-        for (let i = 0; i < maxRetries; i++) {
+        // استخدام المتغيرات العامة المقدمة من البيئة
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        // تهيئة Firebase
+        let app, db, auth;
+        
+        // دالة التهيئة والتحقق من المصادقة
+        async function initializeFirebase() {
             try {
-                const response = await fetch(url, { method: 'POST', body: formData });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                if (Object.keys(firebaseConfig).length === 0) {
+                    console.error("Firebase config is missing. This is expected outside of the Canvas environment.");
                 }
-                return response; // Success, return the response
+                
+                // حاول التهيئة فقط إذا كانت هناك إعدادات متوفرة
+                if (firebaseConfig.apiKey) {
+                    app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    auth = getAuth(app);
+                    
+                    // المصادقة باستخدام الرمز المخصص أو المصادقة المجهولة
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                        console.log("Firebase signed in with custom token.");
+                    } else {
+                        await signInAnonymously(auth);
+                        console.log("Firebase signed in anonymously.");
+                    }
+                } else {
+                    console.warn("Firebase is not fully initialized. Firestore operations will not work.");
+                }
+                
             } catch (error) {
-                console.error(`Attempt ${i + 1} failed:`, error);
-                if (i === maxRetries - 1) {
-                    throw error; // Throw final error if all retries fail
-                }
-                await new Promise(resolve => setTimeout(resolve, delay * (2 ** i)));
+                console.error("Error during Firebase initialization or sign-in:", error);
+                const chatWindow = document.getElementById('chat-window');
+                chatWindow.innerHTML += `
+                    <div class="flex justify-start">
+                        <div class="bg-red-100 text-red-800 p-3 rounded-tr-xl rounded-b-xl max-w-[80%] shadow-md">
+                            <p>خطأ في التهيئة: ${error.message}</p>
+                        </div>
+                    </div>
+                `;
             }
         }
-    }
-
-
-    form.addEventListener('submit', async e => {
-        e.preventDefault();
         
-        const submitButton = document.getElementById('submit');
-        const originalText = submitButton.textContent;
-        
-        // Disable button and show loading state
-        submitButton.disabled = true;
-        submitButton.textContent = 'Submitting...';
+        // تهيئة Firebase عند تحميل الصفحة
+        initializeFirebase();
 
-        try {
-            await submitFormWithRetry(scriptURL, new FormData(form));
-            
-            // Success response
-            showMessage("Booking confirmed! Your details have been submitted successfully.", 'success');
-            form.reset();
-            
-        } catch (error) {
-            // Error response
-            console.error('Final Submission Error:', error);
-            showMessage("Submission failed. Please check your connection and try again.", 'error');
-            
-        } finally {
-            // Re-enable button and restore text
-            submitButton.disabled = false;
-            submitButton.textContent = originalText;
+        // جعل دالة sendMessage متاحة عالمياً
+        window.sendMessage = sendMessage;
+        // جعل دالة startChatSession متاحة عالمياً
+        window.startChatSession = startChatSession;
+    </script>
+    
+    <!-- Gemini API and Chat Logic -->
+    <script>
+        // ************************************************************
+        // تم تحديث اسم النموذج إلى أحدث إصدار متاح gemini-2.5-flash-preview-09-2025
+        // ************************************************************
+        const API_MODEL = "gemini-2.5-flash-preview-09-2025";
+        const API_URL_BASE = `https://generativelanguage.googleapis.com/v1beta/models/${API_MODEL}:generateContent`;
+        
+        // *******************************************************************
+        // ******* إذا كنت تشارك هذا الملف، يرجى إدراج مفتاح API الخاص بك هنا. *******
+        // *******************************************************************
+        // ملاحظة هامة: يجب أن يتم وضع المفتاح فقط للاستخدام خارج بيئة Canvas الآمنة هذه.
+        // لا تقم بوضعه إذا كنت تعمل داخل Canvas، حيث يتم حقن المفتاح تلقائياً.
+        const API_KEY = "AIzaSyCAhpStyWbV86DTv2Ke77Ts64YJ_0A3rU4"; 
+        // *******************************************************************
+        
+        // *************** رابط Google Apps Script للحفظ ***************
+        // تم تصحيح الرابط الذي كان تالفًا، مما سبب فشل الاتصال (Failed to fetch)
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyLk3LNqAIGdR5yy_ylJbT_u1q7x1OuJ0IQqJXk47NF-koVS2aBt8QXGyQ6cM9Q9QaiAw/exec";
+        // ***************************************************************************
+        
+        // سجل تاريخ الدردشة
+        const chatHistory = [];
+        
+        // *************** متغيرات جديدة لتخزين بيانات المستخدم ***************
+        let userName = null;
+        let userPhone = null;
+        // *******************************************************************
+
+        const chatWindow = document.getElementById('chat-window');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const loadingIndicator = document.getElementById('loading-indicator');
+
+        // قائمة الخدمات المستخلصة:
+        const availableServices = [
+            "حلاقة شعر + ذقن", "حلاقة شعر نحتة", "حلاقة ذقن تحديد", "حلاقة ذقن سكسوكة", 
+            "حلاقة ذقن موس كامل", "حلاقة شعر طفل عادي", "شمع", "استشوار", "سنفرة عادية", 
+            "قناع طين vib", "سنفرة مع فوطة حارة", "سنفرة مع البخار", "نص تنظيف", 
+            "صبغة بيجن", "صبغة شامبو", "صبغة ذقن", "صبغة ذقن عرسان", 
+            "قناع نعناع", "قناع فلبيني", "معالج للقشرة", "نصف تنظيف", "تنظيف كامل ليزر مع شفط الدهون", 
+            "حمام مغربي", "بروتين للشعر", "معالج للشعر", "حمام زيت مع الجهاز", 
+            "حمام زيت عادي", "كل شيئ حسب الإتفاق"
+        ];
+        
+        const servicesListText = availableServices.join("، ");
+        
+        // *************** تعليمات النظام المُحسَّنة ***************
+        // تم تحديث التعليمات لإزالة الإشارة إلى أي رابط حجز خارجي والتركيز على رقم الهاتف.
+        const systemPrompt = `أنت مساعد حجوزات وروبوت خدمة عملاء لـ 'مركز الفارس للعناية بالرجل'. الفروع المتاحة هي: بحرة، المحاميد، حدا. مواعيد العمل هي: على مدار 24 ساعة يومياً في جميع الفروع. رقم الهاتف للتواصل والحجز: 0549314418. مهمتك هي الرد على أسئلة العملاء بخصوص الخدمات التالية فقط: ${servicesListText}. الأمر البالغ الأهمية: لا تقم أبداً بذكر أو عرض أي أسعار محددة للخدمات. عند سؤال العميل عن السعر، اطلب منه بأدب مراجعة قائمة الأسعار المفصلة في المركز أو عبر الاتصال. عند طلب العميل لحجز موعد، قم بتوجيهه للتواصل مباشرةً عبر الاتصال برقم الهاتف المخصص (0549314418) أو استخدام نموذج الحجز المتوفر داخل الموقع الرئيسي. كن ودوداً، مهنياً، واستخدم اللغة العربية الفصحى. يجب عليك تزويد العميل بمعلومات الفروع ومواعيد العمل ورقم الهاتف عند السؤال عنها أو محاولة الحجز. تجنب تكرار القائمة الكاملة للخدمات ما لم يطلب العميل ذلك صراحةً.`;
+        // *************************************************************
+        
+        // دالة لبدء جلسة الدردشة بعد إدخال الاسم والهاتف
+        function startChatSession() {
+            const nameInput = document.getElementById('client-name');
+            const phoneInput = document.getElementById('client-phone');
+            const errorElement = document.getElementById('start-error');
+
+            const name = nameInput.value.trim();
+            const phone = phoneInput.value.trim();
+
+            if (name && phone) {
+                userName = name;
+                userPhone = phone;
+                document.getElementById('start-overlay').classList.add('hidden');
+                
+                // تفعيل حقول الدردشة بعد نجاح الإدخال
+                userInput.disabled = false;
+                sendButton.disabled = false;
+                
+                errorElement.classList.add('hidden');
+                userInput.focus(); // وضع المؤشر في حقل الإدخال
+            } else {
+                errorElement.classList.remove('hidden');
+            }
         }
-    });
-</script>
 
+
+        // دالة لمعالجة Markdown وتحويلها إلى HTML (تم تعديل دعم الروابط لعرض زر للحجز)
+        function convertMarkdownToHtml(text) {
+            
+            // 1. تحويل الروابط [text](url) إلى وسم <a> - تم تعديل هذا الجزء لعدم عرض زر للحجز بعد إزالة الرابط الثابت
+            let html = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, linkText, linkUrl) => {
+                // نظرًا لإزالة رابط الحجز الثابت، نكتفي بتحويل الروابط العادية
+                return `<a href="${linkUrl}" target="_blank" class="text-accent hover:text-primary-dark underline font-semibold">${linkText}</a>`;
+            });
+            
+            // 2. تحويل الأسطر الجديدة إلى <br>
+            html = html.replace(/\n/g, '<br>');
+            
+            // 3. تحويل النص الغامق **text**
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // 4. معالجة القوائم غير المرتبة (Markdown list items: * item, - item)
+            html = html.replace(/<br>\s*(\*|\-)\s/g, '</li><li class="mr-6">');
+            
+            // التعامل مع أول عنصر في القائمة (إذا بدأ النص مباشرةً بعلامة قائمة)
+            if (html.startsWith('* ') || html.startsWith('- ')) {
+                 html = html.replace(/^(\*|\-)\s/, '<li class="mr-6">');
+            }
+            
+            // لف العناصر في وسم <ul>، بشرط وجود على الأقل عنصر قائمة واحد
+            if (html.includes('<li>')) {
+                html = html.replace(/<br>(?=<li)/, '');
+                html = `<ul>${html}</li></ul>`;
+                html = html.replace(/<\/li><ul>/g, '<ul>');
+                html = html.replace(/<\/li><br><\/li>/g, '</li><li>');
+                // إصلاح بسيط لجعل القائمة تبدأ وتنتهي بشكل صحيح
+                if (html.startsWith('<ul></li>')) {
+                     html = html.substring(9); // إزالة <ul></li> المبدئية
+                }
+                if (!html.startsWith('<ul>')) {
+                     html = `<ul>${html}`;
+                }
+                if (!html.endsWith('</ul>')) {
+                     html = `${html}</ul>`;
+                }
+            }
+            
+            // إحاطة كل المحتوى بوسم يمكننا من التحكم في تنسيق القوائم عبر CSS
+            return `<div class="markdown-content">${html}</div>`;
+        }
+
+
+        // دالة لعرض الرسالة في واجهة الدردشة وإضافتها للسجل
+        function displayMessage(text, sender) {
+            const messageContainer = document.createElement('div');
+            messageContainer.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+            
+            const messageBubble = document.createElement('div');
+            // تصميم أفضل للفقاعات مع زوايا أكثر استدارة
+            messageBubble.className = `p-4 max-w-[80%] shadow-lg transition-all duration-300 ${
+                sender === 'user' 
+                ? 'bg-user-bg text-gray-900 rounded-2xl rounded-tr-none' 
+                : 'bg-ai-bg text-gray-800 rounded-2xl rounded-tl-none border border-primary-light/50'
+            }`;
+
+            if (sender === 'ai') {
+                const aiLabel = document.createElement('span');
+                aiLabel.className = 'font-bold text-primary block mb-1';
+                aiLabel.textContent = 'مركز الفارس:';
+                messageBubble.appendChild(aiLabel);
+            }
+
+            const messageText = document.createElement('div');
+            messageText.innerHTML = convertMarkdownToHtml(text);
+            messageBubble.appendChild(messageText);
+
+            messageContainer.appendChild(messageBubble);
+            chatWindow.appendChild(messageContainer);
+            
+            // التمرير لأسفل تلقائياً
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        // تم تحديث هذه الدالة لإرسال التبادل الأخير فقط في كل مرة
+        async function logChatHistory() {
+            // نحتاج رسالتين على الأقل (سؤال المستخدم + رد الروبوت)
+            if (chatHistory.length < 2) return; 
+
+            // الحصول على التبادل الأخير
+            const latestAiMsg = chatHistory[chatHistory.length - 1];
+            const latestUserMsg = chatHistory[chatHistory.length - 2];
+
+            // تنظيف النص من علامات HTML والروابط ليكون مناسباً للسجل النصي
+            const cleanText = (text) => text.replace(/<br>/g, ' ').replace(/\[.*?\]\(.*?\)/g, ' ').trim(); // تم حذف "رابط حجز"
+
+            // إعداد البيانات للإرسال. سيتم تسجيل كل تبادل في صف منفصل.
+            const dataToLog = {
+                // معلومات العميل الأساسية (تُسجل في كل صف للمراجعة)
+                userName: userName,
+                userPhone: userPhone,
+                appId: typeof __app_id !== 'undefined' ? __app_id : 'default-app-id',
+                
+                // تفاصيل السؤال
+                userQueryTime: new Date(latestUserMsg.time).toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+                userQuery: cleanText(latestUserMsg.text),
+                
+                // تفاصيل الإجابة
+                aiResponseTime: new Date(latestAiMsg.time).toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+                aiResponse: cleanText(latestAiMsg.text),
+                
+                // وقت تسجيل العملية بالكامل
+                timestamp: new Date().toISOString() 
+            };
+            
+            // نقوم بتحويل البيانات إلى URLSearchParams (نموذج form-urlencoded)
+            const params = new URLSearchParams();
+            params.append('chat_data', JSON.stringify(dataToLog));
+
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: params
+                });
+
+                if (response.status === 200) {
+                    console.log("Latest exchange successfully sent to Google Sheet as a new row.");
+                } else {
+                    console.warn("Latest exchange request sent, but Apps Script returned status:", response.status);
+                }
+            } catch (error) {
+                console.error("Error during chat logging:", error.message);
+            }
+        }
+        // **********************************************************************************************
+
+        // دالة للتحكم في حالة واجهة المستخدم
+        function setUiState(isLoading) {
+            sendButton.disabled = isLoading;
+            userInput.disabled = isLoading;
+            loadingIndicator.classList.toggle('hidden', !isLoading);
+            if (isLoading) {
+                sendButton.innerHTML = `
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    جاري الإرسال
+                `;
+            } else {
+                sendButton.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6 ml-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A5.999 5.999 0 0112 12m0 0l-1.396 1.396M12 12l-6.731-8.874m6.731 8.874a5.999 5.999 0 018.731 8.874L18 12m-6 0l4.731 6.874M12 12l-4.731-6.874" />
+                    </svg>
+                    إرسال
+                `;
+            }
+        }
+
+        // دالة لإرسال الرسالة إلى API مع تطبيق ميزة التراجع الأُسّي (Exponential Backoff)
+        async function sendMessage() {
+            const query = userInput.value.trim();
+            if (!query) return;
+
+            // 1. عرض رسالة المستخدم وإضافتها للسجل
+            displayMessage(query, 'user');
+            chatHistory.push({ role: 'user', text: query, time: new Date().toISOString() });
+            userInput.value = '';
+
+            setUiState(true); // تفعيل حالة التحميل
+
+            const payload = {
+                contents: [{ parts: [{ text: query }] }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+                tools: [{ "google_search": {} }],
+            };
+
+            const maxRetries = 5;
+            let delay = 1000; // 1 ثانية
+            let aiResponseText = "عذراً، حدث خطأ أثناء الاتصال بالخادم. يرجى المحاولة مرة أخرى.";
+
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const apiUrl = `${API_URL_BASE}${API_KEY ? `?key=${API_KEY}` : ''}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const candidate = result.candidates?.[0];
+
+                    if (candidate && candidate.content?.parts?.[0]?.text) {
+                        aiResponseText = candidate.content.parts[0].text;
+                        break; // الخروج من الحلقة عند النجاح
+                    } else {
+                        throw new Error("Invalid API response format or empty content.");
+                    }
+                } catch (error) {
+                    console.error(`Attempt ${i + 1} failed.`, error);
+                    if (i < maxRetries - 1) {
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2; 
+                    } else {
+                        aiResponseText = "عذراً، لم نتمكن من الحصول على رد من الخادم بعد محاولات عديدة. يرجى التأكد من اتصالك بالإنترنت والمحاولة لاحقاً.";
+                    }
+                }
+            }
+
+            // 2. عرض رد الذكاء الاصطناعي وإضافته للسجل
+            displayMessage(aiResponseText, 'ai');
+            chatHistory.push({ role: 'ai', text: aiResponseText, time: new Date().toISOString() });
+            setUiState(false); // إيقاف حالة التحميل
+            
+            // 3. إرسال السجل إلى Google Sheets - الآن يرسل التبادل الأخير فقط
+            logChatHistory(); 
+        }
+
+        // الاستماع لضغط زر Enter في حقل إدخال الدردشة
+        userInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !sendButton.disabled) {
+                sendMessage();
+            }
+        });
+        
+        // الاستماع لضغط زر Enter في حقل إدخال رقم الهاتف في شاشة البدء
+        document.getElementById('client-phone').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                startChatSession();
+            }
+        });
+
+    </script>
 </body>
 </html>
